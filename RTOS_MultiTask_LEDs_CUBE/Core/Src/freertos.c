@@ -52,11 +52,13 @@
 
 /* USER CODE END FunctionPrototypes */
 
-/* Private application code --------------------------------------------------*/
-/* USER CODE BEGIN Application */
+/* Hook prototypes */
+void configureTimerForRunTimeStats(void);
+unsigned long getRunTimeCounterValue(void);
+
 /* USER CODE BEGIN 1 */
 /* Functions needed when configGENERATE_RUN_TIME_STATS is on */
-__weak void configureTimeForRunTimeStats(void) {
+__weak void configureTimerForRunTimeStats(void) {
 	CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
 	DWT->CTRL |= 1;
 	DWT->CYCCNT = 0;
@@ -66,5 +68,9 @@ __weak unsigned long getRunTimeCounterValue(void) {
 	return DWT->CYCCNT;
 }
 /* USER CODE END 1 */
+
+/* Private application code --------------------------------------------------*/
+/* USER CODE BEGIN Application */
+
 /* USER CODE END Application */
 

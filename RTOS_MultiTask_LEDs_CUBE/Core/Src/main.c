@@ -96,11 +96,12 @@ void StartRedTask(void *argument);
 /* USER CODE BEGIN 0 */
 int _write(int file, char *ptr, int len) {
 	int DataIdx;
+	HAL_StatusTypeDef status = HAL_UART_Transmit(&huart3, (uint8_t*)ptr, len, 100);
 	for (DataIdx = 0; DataIdx < len; DataIdx++) {
 		//__io_putchar(*ptr++);
 		ITM_SendChar(*ptr++);
 	}
-	return len;
+	return (status == HAL_OK ? len : 0);
 }
 
 /* USER CODE END 0 */
@@ -447,7 +448,7 @@ void StartBlueTask(void *argument)
 	/* Infinite loop */
 	int jBlueTaskIteration = 0;
 	for (;;) {
-		printf("GreenTaskHandle iteration: %d\n", ++jBlueTaskIteration);
+		printf("BlueTaskHandle iteration: %d\n", ++jBlueTaskIteration);
 		HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_7);	// BLUE
 		osDelay(500);
 	}
@@ -470,7 +471,7 @@ void StartRedTask(void *argument)
 		HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_14);	// RED
 		osDelay(500);
 		printf("RedTaskHandle iteration: %d\n", ++jRedTaskIteration);
-		if (jRedTaskIteration >= 20) {
+		if (jRedTaskIteration == 20) {
 			printf("RedTaskHandle iteration reach 20th iteration\n");
 			printf("RedTaskHandle will now delete the Blue Task, sayonara!\n");
 			vTaskDelete(BlueTaskHandle);

@@ -421,7 +421,7 @@ void RTT_Read(void){
 	uint32_t size = SEGGER_RTT_Read(0, &input, 1u);
 	if (size > 0){
 		SEGGER_RTT_printf(0, "%c", input);
-		if (input >= 48 && input <= 57) jLEDTick = atoi(&input);	// addded so Ozone would work.
+		if (input >= 48 && input <= 57) jLEDTick = atoi(&input);	// added so Ozone would work.
 	}
 }
 /* USER CODE END 4 */
@@ -481,9 +481,9 @@ void StartRedTask(void *argument)
 	/* USER CODE BEGIN StartRedTask */
 	/* Infinite loop */
 	int jRedTaskIteration = 0;
-	int jWaitTick = 1000 * jLEDTick;
+	int jWaitTick = 1000 * jLEDTick;			// default to one-second delay
 	for (;;) {
-		jWaitTick = 1000 * jLEDTick;
+		jWaitTick = 1000 * jLEDTick;			// 1000ms multiply by client input
 		HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_14);	// RED
 		osDelay(jWaitTick);
 		SEGGER_RTT_printf(0,  "RedTaskHandle iteration: %d\n", ++jRedTaskIteration);

@@ -447,7 +447,7 @@ void StartReceiverTask(void *argument)
 			SEGGER_RTT_printf(0, "RX ERROR: %s is empty\r\n", (char*)pcQueueGetName(myQueue));
 		}
 		else SEGGER_RTT_printf(0, "RX: %d\r\n", count);
-		osDelay(1000);
+		osDelay(500);
 	}
 	/* USER CODE END StartReceiverTask */
 }

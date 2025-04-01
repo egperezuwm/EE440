@@ -376,12 +376,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(USER_Btn_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : Blue_Button_Pin */
-  GPIO_InitStruct.Pin = Blue_Button_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(Blue_Button_GPIO_Port, &GPIO_InitStruct);
-
   /*Configure GPIO pins : LD1_Pin LD3_Pin LD2_Pin */
   GPIO_InitStruct.Pin = LD1_Pin|LD3_Pin|LD2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -402,6 +396,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(USB_OverCurrent_GPIO_Port, &GPIO_InitStruct);
 
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
 }
@@ -409,9 +407,10 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-  if (GPIO_Pin == GPIO_PIN_0) // PA0 = Blue user button on NUCLEO-F429ZI
+  if (GPIO_Pin == GPIO_PIN_13) // PA0 = Blue user button on NUCLEO-F429ZI
   {
-		osSemaphoreRelease(myBinarySem01Handle);
+		if (osSemaphoreRelease(myBinarySem01Handle) == osOK)
+			SEGGER_SYSVIEW_PrintfHost("Semaphore released.\n\r");
   }
 }
 /* USER CODE END 4 */
@@ -432,12 +431,13 @@ void StartTask1(void *argument)
 		SEGGER_SYSVIEW_PrintfHost("Task1\n\r");
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, 1);
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, 1);
-		for (int i=1; i<10; i++){
+		for (int i=1; i<10; i++){	// BLINK GREEN AND BLUE LEDS 4 TIMES
 			HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);
 			HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_7);
 			osDelay(250);
 		}
-		osSemaphoreRelease(myBinarySem01Handle);
+		if (osSemaphoreRelease(myBinarySem01Handle) == osOK)
+			SEGGER_SYSVIEW_PrintfHost("Semaphore released.\n\r");
 		osDelay(1000);
 	}
   /* USER CODE END 5 */
@@ -452,12 +452,13 @@ void StartTask1(void *argument)
 /* USER CODE END Header_StartTask2 */
 void StartTask2(void *argument)
 {
-  /* USER CODE BEGIN StartTask2 */
+	/* USER CODE BEGIN StartTask2 */
 	/* Infinite loop */
 	for(;;)
 	{
 		SEGGER_SYSVIEW_PrintfHost("Task2\n\r");
 		if (osSemaphoreAcquire(myBinarySem01Handle, 1000) == osOK){
+			SEGGER_SYSVIEW_PrintfHost("Semaphore acquired.\n\r");
 			for (int i=1; i<=8; i++){
 				HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_14);
 				osDelay(100);
@@ -466,7 +467,7 @@ void StartTask2(void *argument)
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, 0);
 		osDelay(100);
 	}
-  /* USER CODE END StartTask2 */
+	/* USER CODE END StartTask2 */
 }
 
 /**

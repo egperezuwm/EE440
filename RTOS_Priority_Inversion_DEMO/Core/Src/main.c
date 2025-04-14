@@ -485,6 +485,7 @@ void StartTaskA(void *argument)
 			if (osSemaphoreRelease(myBinarySem01Handle) == osOK)
 				SEGGER_SYSVIEW_PrintfHost("TaskA released released semaphore.\n\r");
 		}
+		else SEGGER_SYSVIEW_PrintfHost("TaskA failed to acquire semaphore.\n\r");
 		osDelay(1);
 	}
   /* USER CODE END 5 */
@@ -510,6 +511,7 @@ void StartTaskB(void *argument)
 			if (osSemaphoreRelease(myBinarySem01Handle) == osOK)
 				SEGGER_SYSVIEW_PrintfHost("TaskB released released semaphore.\n\r");
 		}
+		else SEGGER_SYSVIEW_PrintfHost("TaskB failed to acquire semaphore.\n\r");
 		osDelay(1);
 	}
   /* USER CODE END StartTaskB */
@@ -531,7 +533,7 @@ void StartTaskC(void *argument)
 		SEGGER_SYSVIEW_PrintfHost("TaskC\n\r");
 		uint32_t rnd;
 	    HAL_RNG_GenerateRandomNumber(&hrng, &rnd);
-	    uint32_t delay = (rnd % 2000) + 1000;	// 1000-2999ms
+	    uint32_t delay = (rnd % 4000) + 1000;	// 1000-2999ms
 	    osDelay(delay);
 	}
   /* USER CODE END StartTaskC */

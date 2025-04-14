@@ -512,7 +512,7 @@ void StartTaskB(void *argument)
 	for(;;)
 	{
 		SEGGER_SYSVIEW_PrintfHost("TaskB\n\r");
-		if (osMutexAcquire(myMutex01Handle, 1000) == osOK){
+		if (osMutexAcquire(myMutex01Handle, 2000) == osOK){
 			SEGGER_SYSVIEW_PrintfHost("TaskB acquired mutex.\n\r");
 			BlinkThreeTimes(GPIO_PIN_0);	// BLINK GREEN LED
 			SEGGER_SYSVIEW_PrintfHost("TaskB releasing mutex.\n\r");
